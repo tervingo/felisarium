@@ -5,34 +5,57 @@ const FileReader = () => {
   const [lines, setLines] = useState([]);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [refreshTime, setRefreshTime] = useState(new Date().toLocaleTimeString());
 
-  useEffect(() => {
-    const loadFile = async () => {
-      try {
-        setIsLoading(true);
-        // Using cors-anywhere proxy service
-        const CORS_PROXY = "https://corsproxy.io/?";
-        const targetUrl = "http://tervingo.com/Felisarium/input.txt";
-        const response = await fetch(CORS_PROXY + encodeURIComponent(targetUrl));
-        
-        if (!response.ok) {
-          throw new Error(`Failed to load file: ${response.status}`);
-        }
-        const text = await response.text();
-        const fileLines = text.split('\n').filter(line => line.trim());
-        setLines(fileLines);
-      } catch (err) {
-        setError(err.message);
-        console.error('Error loading file:', err);
-      } finally {
-        setIsLoading(false);
+  const loadFile = async () => {
+    try {
+      setIsLoading(true);
+      const CORS_PROXY = "https://corsproxy.io/?";
+      const targetUrl = "http://tervingo.com/Felisarium/input.txt";
+      
+      // Add cache-busting query parameter
+      const cacheBuster = `${targetUrl}${targetUrl.includes('?') ? '&' : '?'}_t=${Date.now()}`;
+      
+      const response = await fetch(CORS_PROXY + encodeURIComponent(cacheBuster), {
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        },
+        cache: 'no-store'
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to load file: ${response.status}`);
       }
-    };
 
+      const text = await response.text();
+      const fileLines = text.split('\n').filter(line => line.trim());
+      setLines(fileLines);
+      setRefreshTime(new Date().toLocaleTimeString());
+      console.log('File refreshed at:', new Date().toLocaleTimeString());
+
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+      console.error('Error loading file:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Initial load
+  useEffect(() => {
     loadFile();
-  }, []);
+  }, []); 
 
-  if (isLoading) {
+  // Set up periodic refresh
+  useEffect(() => {
+    const interval = setInterval(loadFile, 60000); // Refresh every minute
+    return () => clearInterval(interval);
+  }, []); 
+
+  if (isLoading && lines.length === 0) {
     return (
       <div className="max-w-3xl mx-auto p-6">
         <div className="text-gray-600">
@@ -52,7 +75,6 @@ const FileReader = () => {
     );
   }
 
-
   return (
     <div className="max-w-3xl mx-auto p-6">
       <h1 className="text-4xl font-bold mb-4 text-gray-500">Felisarium</h1>
@@ -61,6 +83,9 @@ const FileReader = () => {
         <img src={myImage} alt="" />
       </div>
       <br/><br/>
+      <div className="text-sm text-gray-500 mb-4">
+        Last checked: {refreshTime}
+      </div>
       <div>
         {lines.map((line, index) => (
           <h3 key={index} className="text-xl font-semibold my-2">
