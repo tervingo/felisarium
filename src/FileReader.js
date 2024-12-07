@@ -74,7 +74,7 @@ const FileReader = () => {
       <h1 className="text-4xl font-bold mb-4 text-gray-500">Felisarium</h1>
       <br/>
       <div>
-        <img src={myImage} alt="" />
+        <img src={myImage} alt="" style={{ width: '240px', height: '340px'}} />
       </div>
       <br/><br/>
 {/*       <div className="text-sm text-gray-500 mb-4">
