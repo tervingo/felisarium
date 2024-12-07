@@ -3,7 +3,7 @@ import FileReader from './FileReader';  // Adjust the path based on your file st
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-300">
       <FileReader />
     </div>
   );

@@ -55,7 +55,7 @@ const FileReader = () => {
 
   return (
     <div className="max-w-3xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">Felisarium</h1>
+      <h1 className="text-4xl font-bold mb-4 text-gray-500">Felisarium</h1>
       <br/>
       <div>
         <img src={myImage} alt="" />
