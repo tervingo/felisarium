@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import myImage from './images/Felisa.jpg';  // adjust path as needed
+import myImage from './images/Felisa_color.jpg';  // adjust path as needed
 
 const FileReader = () => {
   const [felisadasLines, setFelisadasLines] = useState([]);
+  const [serranadasLines, setSerranadasLines] = useState([]);
   const [otrosLines, setOtrosLines] = useState([]);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -42,6 +43,7 @@ const FileReader = () => {
   // Initial load
   useEffect(() => {
     loadFile('felisadas.txt', setFelisadasLines);
+    loadFile('serranadas.txt', setSerranadasLines);
     loadFile('otros.txt', setOtrosLines);
   }, [loadFile]); 
 
@@ -49,12 +51,13 @@ const FileReader = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       loadFile('felisadas.txt', setFelisadasLines);
+      loadFile('serranadas.txt', setSerranadasLines);
       loadFile('otros.txt', setOtrosLines);
     }, 60000); // Refresh every minute
     return () => clearInterval(interval);
   }, [loadFile]); 
 
-  if (isLoading && felisadasLines.length === 0 && otrosLines.length === 0) {
+  if (isLoading && felisadasLines.length === 0 && serranadasLines.length === 0 && otrosLines.length === 0) {
     return (
       <div className="max-w-3xl mx-auto p-6">
         <div className="text-gray-600">
@@ -86,15 +89,17 @@ const FileReader = () => {
         <table className="min-w-full bg-gray-300 border border-grey-500">
           <thead>
             <tr>
-              <th className="py-2 px-4 border-b border-gray-400 w-1/2 border-r-2 border-gray-400">Felisadas</th>
-              <th className="py-2 px-4 border-b border-gray-400 w-1/2">Otros</th>
+              <th className="py-2 px-4 border-b border-gray-400 w-1/3 border-r-2 border-gray-400">Felisadas</th>
+              <th className="py-2 px-4 border-b border-gray-400 w-1/3 border-r-2 border-gray-400">Serranadas</th>
+              <th className="py-2 px-4 border-b border-gray-400 w-1/3">Otros</th>
             </tr>
           </thead>
           <tbody>
             {felisadasLines.map((line, index) => (
               <tr key={index}>
-                <td className="py-2 px-4 border-b border-gray-400 w-1/2 border-r-2 border-gray-400">{line}</td>
-                <td className="py-2 px-4 border-b border-gray-400 w-1/2">{otrosLines[index] || ''}</td>
+                <td className="py-2 px-4 border-b border-gray-400 w-1/3 border-r-2 border-gray-400">{line}</td>
+                <td className="py-2 px-4 border-b border-gray-400 w-1/3 border-r-2 border-gray-400">{serranadasLines[index] || ''}</td>
+                <td className="py-2 px-4 border-b border-gray-400 w-1/3">{otrosLines[index] || ''}</td>
               </tr>
             ))}
           </tbody>
