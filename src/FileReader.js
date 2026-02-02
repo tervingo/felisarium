@@ -12,14 +12,13 @@ const FileReader = () => {
   const loadFile = useCallback(async (fileName, setLines) => {
     try {
       setIsLoading(true);
-      const CORS_PROXY = "https://api.allorigins.win/raw?url=";
-//      const CORS_PROXY = "https://corsproxy.io/?";  // corsproxy.io devuelve 403 (posiblemente descontinuado)
-      const targetUrl = `http://tervingo.com/Felisarium/${fileName}`;
-      
-      // Add cache-busting query parameter
-      const cacheBuster = `${targetUrl}${targetUrl.includes('?') ? '&' : '?'}_t=${Date.now()}`;
-      
-      const response = await fetch(CORS_PROXY + encodeURIComponent(cacheBuster));
+      // En producción: proxy propio en Netlify. En desarrollo: proxy de CRA (package.json)
+      const isDev = process.env.NODE_ENV === 'development';
+      const url = isDev
+        ? `/Felisarium/${fileName}?_t=${Date.now()}`
+        : `/.netlify/functions/fetch-file?file=${encodeURIComponent(fileName)}&_t=${Date.now()}`;
+
+      const response = await fetch(url);
       
       if (!response.ok) {
         throw new Error(`Failed to load file: ${response.status}`);
