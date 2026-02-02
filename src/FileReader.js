@@ -12,8 +12,8 @@ const FileReader = () => {
   const loadFile = useCallback(async (fileName, setLines) => {
     try {
       setIsLoading(true);
-//      const CORS_PROXY = "https://api.allorigins.win/raw?url=";
-      const CORS_PROXY = "https://corsproxy.io/?";
+      const CORS_PROXY = "https://api.allorigins.win/raw?url=";
+//      const CORS_PROXY = "https://corsproxy.io/?";  // corsproxy.io devuelve 403 (posiblemente descontinuado)
       const targetUrl = `http://tervingo.com/Felisarium/${fileName}`;
       
       // Add cache-busting query parameter
